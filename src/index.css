@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  /* Cores SYSTELOS — mesmo padrão do TUR */
+  --color-primary:    #0F1B3D;
+  --color-primary-light: #1a2d5a;
+  --color-accent:     #E8B84B;
+  --color-accent-dark: #c9a03a;
+  --color-success:    #10b981;
+  --color-warning:    #f59e0b;
+  --color-danger:     #ef4444;
+  --color-bg:         #f8f9fa;
+
+  /* Tipografia */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Bordas */
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+}
+
+/* Reset mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Safe areas para iPhone e Android com notch */
+.safe-top    { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-x      { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
