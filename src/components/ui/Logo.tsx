@@ -1,6 +1,6 @@
 // ============================================================================
 // SYSTELOS PONTO — Logo Component
-// Adaptado do TUR: texto alterado para "SYSTELOS PONTO"
+// Usa a mesma imagem S.png do TUR
 // ============================================================================
 
 interface LogoProps {
@@ -18,14 +18,11 @@ export function Logo({ size = 'md', showText = true, className = '' }: LogoProps
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      {/* Ícone [S] dourado — mesmo do TUR */}
-      <div
-        className={`${sizes[size].icon} rounded-xl flex items-center justify-center text-white font-bold mb-3`}
-        style={{ background: 'linear-gradient(135deg, #E8B84B 0%, #c9a03a 100%)', fontSize: size === 'lg' ? '1.75rem' : size === 'md' ? '1.5rem' : '1rem' }}
-      >
-        [S]
-      </div>
-
+      <img
+        src="/S.png"
+        alt="SYSTELOS"
+        className={`${sizes[size].icon} rounded-xl mb-3`}
+      />
       {showText && (
         <>
           <h1
