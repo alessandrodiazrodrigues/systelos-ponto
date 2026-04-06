@@ -1,6 +1,5 @@
 // ============================================================================
 // SYSTELOS PONTO — Logo Component
-// Usa a mesma imagem S.png do TUR
 // ============================================================================
 
 interface LogoProps {
@@ -11,9 +10,9 @@ interface LogoProps {
 
 export function Logo({ size = 'md', showText = true, className = '' }: LogoProps) {
   const sizes = {
-    sm: { icon: 'w-8 h-8',  text: 'text-lg' },
-    md: { icon: 'w-12 h-12', text: 'text-2xl' },
-    lg: { icon: 'w-16 h-16', text: 'text-3xl' },
+    sm: { icon: 'w-10 h-10',  text: 'text-lg' },
+    md: { icon: 'w-16 h-16', text: 'text-2xl' },
+    lg: { icon: 'w-20 h-20', text: 'text-3xl' },
   }
 
   return (
@@ -21,7 +20,7 @@ export function Logo({ size = 'md', showText = true, className = '' }: LogoProps
       <img
         src="/S.png"
         alt="SYSTELOS"
-        className={`${sizes[size].icon} rounded-xl mb-3`}
+        className={`${sizes[size].icon} mb-3`}
       />
       {showText && (
         <>
