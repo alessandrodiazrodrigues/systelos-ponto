@@ -139,8 +139,10 @@ export default function MarcarPontoPage() {
   async function buscarMarcacoes() {
     setCarregando(true)
     try {
+      const token = localStorage.getItem('systelos_ponto_token')
       const { data } = await axios.get(
-        `${API_URL}/api/equipe/ponto/hoje/${funcionarioId}`
+        `${API_URL}/api/equipe/ponto/hoje/${funcionarioId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       )
       setMarcacoesHoje(data.data)
     } catch {
@@ -209,6 +211,7 @@ export default function MarcarPontoPage() {
     setIsLoading(true)
 
     try {
+      const token = localStorage.getItem('systelos_ponto_token')
       const { data } = await axios.post(`${API_URL}/api/equipe/ponto/marcar`, {
         funcionario_id: funcionarioId,
         tipo:           proxima,
@@ -217,7 +220,7 @@ export default function MarcarPontoPage() {
         longitude,
         gps_accuracy:   gpsAccuracy,
         foto_base64:    fotoBase64,
-      })
+      }, { headers: { Authorization: `Bearer ${token}` } })
 
       setComprovante({
         nsr:       data.data.nsr,
