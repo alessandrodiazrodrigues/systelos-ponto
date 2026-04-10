@@ -105,7 +105,7 @@ function Relogio() {
 type Etapa = 'inicio' | 'camera' | 'preview' | 'confirmando' | 'comprovante' | 'erro'
 
 export default function MarcarPontoPage() {
-  const { usuario } = useAuth()
+  const { usuario, logout } = useAuth()
   const API_URL = (import.meta as any).env?.VITE_API_URL ?? 'https://api.systelos.com.br'
 
   // Estado principal
@@ -145,8 +145,14 @@ export default function MarcarPontoPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       setMarcacoesHoje(data.data)
-    } catch {
-      setMarcacoesHoje({ marcacoes: [], proxima_marcacao: 'ENTRADA', jornada_completa: false })
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        setErroMsg('Sua sessão expirou. Faça login novamente.')
+        setEtapa('erro')
+        setTimeout(() => logout(), 2500)
+      } else {
+        setMarcacoesHoje({ marcacoes: [], proxima_marcacao: 'ENTRADA', jornada_completa: false })
+      }
     } finally {
       setCarregando(false)
     }
@@ -176,6 +182,12 @@ export default function MarcarPontoPage() {
   // Câmera — selfie frontal
   // ============================================================
   async function abrirCamera() {
+    // Bloquear se funcionario_id não estiver disponível
+    if (!funcionarioId) {
+      setErroMsg('Seu usuário não está vinculado a um registro de funcionário. Entre em contato com o RH ou administrador.')
+      setEtapa('erro')
+      return
+    }
     setEtapa('camera')
     try {
       const foto = await Camera.getPhoto({
@@ -233,6 +245,15 @@ export default function MarcarPontoPage() {
       setTimeout(buscarMarcacoes, 1000)
 
     } catch (err: any) {
+      const status = err.response?.status
+      if (status === 401) {
+        // Sessão expirada — avisa e redireciona para login
+        setErroMsg('Sua sessão expirou. Faça login novamente.')
+        setEtapa('erro')
+        setIsLoading(false)
+        setTimeout(() => logout(), 2500)
+        return
+      }
       setErroMsg(err.response?.data?.message ?? 'Erro ao registrar ponto. Tente novamente.')
       setEtapa('erro')
       setIsLoading(false)
@@ -377,11 +398,11 @@ export default function MarcarPontoPage() {
           <h2 className="text-lg font-bold text-gray-900 mb-2">Erro ao registrar</h2>
           <p className="text-gray-500 text-sm mb-6">{erroMsg}</p>
           <button
-            onClick={reiniciar}
+            onClick={erroMsg.includes('sessão expirou') ? logout : reiniciar}
             className="w-full py-3 rounded-xl font-medium text-white"
             style={{ background: '#0F1B3D' }}
           >
-            Tentar novamente
+            {erroMsg.includes('sessão expirou') ? 'Fazer login' : 'Tentar novamente'}
           </button>
         </div>
       </div>
