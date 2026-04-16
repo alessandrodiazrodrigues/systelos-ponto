@@ -269,6 +269,13 @@ export default function MarcarPontoPage() {
         setTimeout(() => logout(), 2500)
         return
       }
+      if (status === 422) {
+        // Fora do raio autorizado
+        setErroMsg('📍 Você está fora do local autorizado. Aproxime-se da loja para registrar o ponto.')
+        setEtapa('erro')
+        setIsLoading(false)
+        return
+      }
       setErroMsg(err.response?.data?.message ?? 'Erro ao registrar ponto. Tente novamente.')
       setEtapa('erro')
       setIsLoading(false)
@@ -402,22 +409,36 @@ export default function MarcarPontoPage() {
   // RENDER — ERRO
   // ============================================================
   if (etapa === 'erro') {
+    const isForaDoLocal = erroMsg.includes('fora do local autorizado')
+    const isSessaoExpirada = erroMsg.includes('sessão expirou')
+
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-sm bg-white rounded-2xl p-8 text-center shadow-sm">
-          <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </div>
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Erro ao registrar</h2>
+          {isForaDoLocal ? (
+            <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+          )}
+          <h2 className="text-lg font-bold text-gray-900 mb-2">
+            {isForaDoLocal ? 'Localização não autorizada' : 'Erro ao registrar'}
+          </h2>
           <p className="text-gray-500 text-sm mb-6">{erroMsg}</p>
           <button
-            onClick={erroMsg.includes('sessão expirou') ? logout : reiniciar}
+            onClick={isSessaoExpirada ? logout : reiniciar}
             className="w-full py-3 rounded-xl font-medium text-white"
             style={{ background: '#0F1B3D' }}
           >
-            {erroMsg.includes('sessão expirou') ? 'Fazer login' : 'Tentar novamente'}
+            {isSessaoExpirada ? 'Fazer login' : 'Tentar novamente'}
           </button>
         </div>
       </div>
