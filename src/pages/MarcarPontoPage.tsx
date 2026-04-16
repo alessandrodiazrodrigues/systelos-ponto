@@ -162,23 +162,35 @@ export default function MarcarPontoPage() {
   // GPS
   // ============================================================
   async function obterGPS() {
+    // No browser (não nativo), GPS costuma falhar — tenta mas não trava
     try {
       if (Capacitor.isNativePlatform()) {
         await Geolocation.requestPermissions()
       }
-      const pos = await Geolocation.getCurrentPosition({
-        enableHighAccuracy: false,
-        timeout: 8000,
-        maximumAge: 60000
-      })
+
+      const pos = await Promise.race([
+        Geolocation.getCurrentPosition({
+          enableHighAccuracy: false,
+          maximumAge: 60000,
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('timeout')), 5000)
+        ),
+      ])
+
       setLatitude(pos.coords.latitude)
       setLongitude(pos.coords.longitude)
       setGpsAccuracy(pos.coords.accuracy)
       setGpsStatus('ok')
       setGpsLabel(`Precisão: ${Math.round(pos.coords.accuracy)}m`)
     } catch {
+      // GPS falhou ou demorou — não bloqueia, registra sem localização
       setGpsStatus('erro')
-      setGpsLabel('GPS indisponível — ponto será registrado sem localização')
+      setGpsLabel(
+        Capacitor.isNativePlatform()
+          ? 'GPS indisponível — ponto será registrado sem localização'
+          : 'PC detectado — ponto será registrado sem localização GPS'
+      )
     }
   }
 
