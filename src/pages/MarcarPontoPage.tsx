@@ -166,7 +166,11 @@ export default function MarcarPontoPage() {
       if (Capacitor.isNativePlatform()) {
         await Geolocation.requestPermissions()
       }
-      const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true })
+      const pos = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: false,
+        timeout: 8000,
+        maximumAge: 60000
+      })
       setLatitude(pos.coords.latitude)
       setLongitude(pos.coords.longitude)
       setGpsAccuracy(pos.coords.accuracy)
@@ -174,7 +178,7 @@ export default function MarcarPontoPage() {
       setGpsLabel(`Precisão: ${Math.round(pos.coords.accuracy)}m`)
     } catch {
       setGpsStatus('erro')
-      setGpsLabel('GPS indisponível')
+      setGpsLabel('GPS indisponível — ponto será registrado sem localização')
     }
   }
 
