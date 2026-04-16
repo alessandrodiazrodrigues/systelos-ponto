@@ -131,10 +131,9 @@ export default function MarcarPontoPage() {
   // Busca marcações do dia ao montar
   // ============================================================
   useEffect(() => {
-    if (!funcionarioId) return
-    buscarMarcacoes()
-    obterGPS()
-  }, [funcionarioId])
+    buscarMarcacoes()  // sempre roda — garante que carregando vira false
+    obterGPS()         // sempre tenta GPS
+  }, [])
 
   async function buscarMarcacoes() {
     setCarregando(true)
